@@ -31,7 +31,7 @@ async def lifespan(app: FastAPI):
     # TODO Day 4: await init_kafka()
     # TODO Day 4: asyncio.create_task(start_kafka_consumer())
 
-    logger.info("🚀 DeployBrain Core App started")
+    logger.info("🚀 AutoResolve Core App started")
     yield
 
     # ── Shutdown ─────────────────────────────────────────────────────
@@ -42,7 +42,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="DeployBrain",
+    title="AutoResolve",
     description="Autonomous CI/CD failure diagnosis and repair agent",
     version="1.0.0",
     lifespan=lifespan,
@@ -70,7 +70,7 @@ app.add_middleware(
 @app.get("/")
 async def root():
     return {
-        "service": "DeployBrain",
+        "service": "AutoResolve",
         "status": "running",
         "version": "1.0.0",
     }

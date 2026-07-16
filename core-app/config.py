@@ -2,14 +2,14 @@ from pathlib import Path
 from typing import List
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-# Resolves to deploybrain/ regardless of where uvicorn is invoked from
+# Resolves to AutoResolve/ regardless of where uvicorn is invoked from
 _ROOT = Path(__file__).resolve().parent.parent
 
 
 class Settings(BaseSettings):
     # Database
     database_url: str = (
-        "postgresql+asyncpg://postgres:postgres@localhost:5432/deploybrain"
+        "postgresql+asyncpg://postgres:postgres@localhost:5432/autoresolve"
     )
     # Redis
     redis_host: str = "localhost"
@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     github_token: str = ""
     webhook_secret: str = ""
     # AWS
-    s3_bucket: str = "deploybrain-logs"
+    s3_bucket: str = "autoresolve-logs"
     aws_access_key_id: str = ""
     aws_secret_access_key: str = ""
     aws_region: str = "us-east-1"

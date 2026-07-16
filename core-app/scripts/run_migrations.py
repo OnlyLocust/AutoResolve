@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Migration runner for DeployBrain.
+Migration runner for AutoResolve.
 Applies all V*.sql files in migrations/ in filename order.
 Tracks applied filenames in schema_migrations table.
 
-Usage (from deploybrain/ root):
+Usage (from AutoResolve/ root):
     python core-app/scripts/run_migrations.py
 
 Requirements:
@@ -25,7 +25,7 @@ load_dotenv(_ROOT / "infra" / ".env.local")
 
 RAW_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql+asyncpg://postgres:postgres@localhost:5432/deploybrain",
+    "postgresql+asyncpg://postgres:postgres@localhost:5432/autoresolve",
 ).replace("postgresql+asyncpg://", "postgresql://")
 
 MIGRATIONS_DIR = Path(__file__).resolve().parent.parent / "migrations"

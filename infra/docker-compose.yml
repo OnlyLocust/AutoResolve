@@ -6,7 +6,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: deploybrain
+      POSTGRES_DB: autoresolve
     ports:
       - "5433:5432"
     volumes:

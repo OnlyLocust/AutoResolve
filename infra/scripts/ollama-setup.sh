@@ -14,13 +14,13 @@ sleep 5
 echo "Pulling llama3.1:8b (4.7GB — takes several minutes)..."
 ollama pull llama3.1:8b
 
-echo "Creating custom DeployBrain model from Modelfile..."
+echo "Creating custom AutoResolve model from Modelfile..."
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ollama create deploybrain -f "$SCRIPT_DIR/Modelfile"
+ollama create autoresolve -f "$SCRIPT_DIR/Modelfile"
 
 echo ""
 echo "✅ Ollama setup complete."
-echo "   Test with: ollama run deploybrain"
+echo "   Test with: ollama run autoresolve"
 echo "   Stop server: kill $OLLAMA_PID"
 
 wait $OLLAMA_PID

@@ -13,7 +13,7 @@ async def run_migrations():
     db_url = settings.database_url.replace("+asyncpg", "")
     
     # Parse DB name from URL to check if it exists
-    # e.g., postgresql://postgres:postgres@localhost:5432/deploybrain
+    # e.g., postgresql://postgres:postgres@localhost:5432/autoresolve
     base_url, db_name = db_url.rsplit("/", 1)
     # Strip any query parameters from db_name if present
     db_name = db_name.split("?")[0]
