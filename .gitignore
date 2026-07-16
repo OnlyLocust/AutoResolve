@@ -1,0 +1,36 @@
+# Environment — NEVER commit these
+.env.local
+.env.production
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# ML
+*.joblib
+*.pkl
+
+# Node
+node_modules/
+dashboard/dist/
+dashboard/build/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
