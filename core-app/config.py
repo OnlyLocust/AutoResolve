@@ -38,6 +38,8 @@ class Settings(BaseSettings):
     aws_region: str = "us-east-1"
     # App
     cors_origins: List[str] = ["http://localhost:3000"]
+    # Webhook
+    webhook_secret: str
 
     model_config = SettingsConfigDict(
         env_file=str(_ROOT / "infra" / ".env.local"),

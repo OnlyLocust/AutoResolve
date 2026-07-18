@@ -5,10 +5,11 @@ from sqlalchemy import select, update
 from models.build import Build
 
 
-async def create_build(session: AsyncSession, data: dict) -> Build:
-    build = Build(**data)
+async def create_build(session: AsyncSession, build: Build) -> Build:
     session.add(build)
-    await session.flush()
+    # Using commit instead of flush so the data is permanently saved to the DB right now
+    await session.commit()
+    await session.refresh(build)
     return build
 
 

@@ -8,6 +8,8 @@ from sqlalchemy import text
 from config import settings
 from db import engine
 
+from routers import webhook
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -55,6 +57,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(webhook.router)
 
 # Routers are registered as each day is completed:
 # TODO Day 2:  from routers.webhook import router as webhook_router
