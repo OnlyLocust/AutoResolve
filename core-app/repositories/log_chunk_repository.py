@@ -4,10 +4,11 @@ from sqlalchemy import select, text
 from models.log_chunk import LogChunk
 
 
-async def create_log_chunk(session: AsyncSession, data: dict) -> LogChunk:
-    chunk = LogChunk(**data)
+async def create_log_chunk(session: AsyncSession, chunk: LogChunk) -> LogChunk:
     session.add(chunk)
-    await session.flush()
+    # Commit the chunk to the database
+    await session.commit()
+    await session.refresh(chunk)
     return chunk
 
 

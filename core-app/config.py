@@ -40,6 +40,11 @@ class Settings(BaseSettings):
     cors_origins: List[str] = ["http://localhost:3000"]
     # Webhook
     webhook_secret: str
+    
+    github_token: str
+    aws_access_key_id: str = "dummy"
+    aws_secret_access_key: str = "dummy"
+    aws_region: str = "us-east-1"
 
     model_config = SettingsConfigDict(
         env_file=str(_ROOT / "infra" / ".env.local"),

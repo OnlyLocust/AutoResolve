@@ -38,6 +38,7 @@ async def update_build_status(
         .where(Build.id == build_id)
         .values(status=status, **kwargs)
     )
+    await session.commit() # <-- ADD THIS LINE
 
 
 async def get_recent_builds(
