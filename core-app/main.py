@@ -7,8 +7,14 @@ from sqlalchemy import text
 
 from config import settings
 from db import engine
-
 from routers import webhook
+
+# --- DAY 4 IMPORTS ---
+from redis_client import init_redis, close_redis
+from kafka_setup import create_kafka_topic
+from services.kafka_producer import start_producer, stop_producer
+from services.kafka_consumer import start_consumer, stop_consumer
+# ---------------------
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -16,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # ── Postgres — non-fatal on Day 1 local dev (no Docker) ──────────
+    # ── Postgres ──────────
     try:
         async with engine.connect() as conn:
             await conn.execute(text("SELECT 1"))
@@ -29,17 +35,32 @@ async def lifespan(app: FastAPI):
             exc,
         )
 
-    # TODO Day 4: await init_redis()
-    # TODO Day 4: await init_kafka()
-    # TODO Day 4: asyncio.create_task(start_kafka_consumer())
+    # ── Day 4: Redis & Kafka Startup ──────────
+    try:
+        await init_redis()
+        logger.info("✅ Redis connected")
+        
+        await create_kafka_topic()
+        await start_producer()
+        await start_consumer()
+        logger.info("✅ Kafka Producer & Consumer started")
+    except Exception as exc:
+        logger.warning(f"⚠️ Redis or Kafka startup failed: {exc}")
 
     logger.info("🚀 AutoResolve Core App started")
     yield
 
     # ── Shutdown ─────────────────────────────────────────────────────
     await engine.dispose()
-    # TODO Day 4: await close_redis()
-    # TODO Day 4: await close_kafka()
+    
+    # ── Day 4: Redis & Kafka Shutdown ──────────
+    try:
+        await stop_consumer()
+        await stop_producer()
+        await close_redis()
+    except Exception as exc:
+        logger.warning(f"⚠️ Error during Redis/Kafka shutdown: {exc}")
+        
     logger.info("👋 Shutdown complete")
 
 
@@ -61,8 +82,6 @@ app.add_middleware(
 app.include_router(webhook.router)
 
 # Routers are registered as each day is completed:
-# TODO Day 2:  from routers.webhook import router as webhook_router
-# TODO Day 2:  app.include_router(webhook_router, prefix="/api")
 # TODO Day 16: from routers.dashboard import router as dashboard_router
 # TODO Day 16: app.include_router(dashboard_router, prefix="/api")
 # TODO Day 16: from routers.websocket import router as ws_router

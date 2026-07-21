@@ -32,7 +32,7 @@ async def ingest_build(payload: WebhookPayload, session: AsyncSession):
     # --- NEW DAY 3 PIPELINE ---
     try:
         extracted = await fetch_and_extract_logs(repo_name, build_id, run.logs_url)
-        await chunk_and_save_logs(session, build_id, extracted)
+        await chunk_and_save_logs(session, build_id,repo_name, extracted)
     except Exception as e:
         print(f"Error processing logs: {e}")
         await session.rollback()

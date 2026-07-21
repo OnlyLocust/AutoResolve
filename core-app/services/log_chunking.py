@@ -2,8 +2,16 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from models.log_chunk import LogChunk
 from repositories.log_chunk_repository import create_log_chunk
 from repositories.build_repository import update_build_status
+from schemas.kafka_message import KafkaMessage
+from services.kafka_producer import send_log_chunk
 
-async def chunk_and_save_logs(session: AsyncSession, build_id: str, extracted_logs: dict, chunk_size: int = 500):
+async def chunk_and_save_logs(
+    session: AsyncSession, 
+    build_id: str, 
+    repo_name: str,       # <-- Added repo_name to function signature
+    extracted_logs: dict, 
+    chunk_size: int = 500
+):
     total_chunks_saved = 0
     global_chunk_index = 0  # Track the index continuously across all files
     
@@ -19,18 +27,30 @@ async def chunk_and_save_logs(session: AsyncSession, build_id: str, extracted_lo
         
         for chunk_lines in chunks:
             chunk_content = "\n".join(chunk_lines)
+            chunk_full_content = f"--- File: {file_name} ---\n{chunk_content}"
             
+            # 1. Persist the log segment inside PostgreSQL for long-term historical records
             chunk_record = LogChunk(
                 build_id=build_id,
-                chunk_index=global_chunk_index,  # Use the continuous counter
+                chunk_index=global_chunk_index,
                 total_chunks=total_chunks_all_files,
-                content=f"--- File: {file_name} ---\n{chunk_content}"
+                content=chunk_full_content
             )
             await create_log_chunk(session, chunk_record)
+            
+            # 2. Construct and pipe the structured payload downstream over Apache Kafka
+            kafka_msg = KafkaMessage(
+                build_id=build_id,
+                chunk_index=global_chunk_index,
+                total_chunks=total_chunks_all_files,
+                content=chunk_full_content,
+                repo_name=repo_name
+            )
+            await send_log_chunk(kafka_msg)
             
             global_chunk_index += 1
             total_chunks_saved += 1
             
     # Update build status to reflect completion
     await update_build_status(session, build_id, "LOGS_FETCHED")
-    print(f"Successfully chunked and saved {total_chunks_saved} log segments to DB.")
+    print(f"Successfully chunked, saved to DB, and streamed {total_chunks_saved} log segments to Kafka.")
