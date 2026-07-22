@@ -6,6 +6,7 @@ from pgvector.sqlalchemy import Vector
 from db import Base
 
 
+
 class LogChunk(Base):
     __tablename__ = "log_chunks"
 
@@ -19,8 +20,8 @@ class LogChunk(Base):
     total_chunks: Mapped[int] = mapped_column(Integer, nullable=False)
     content: Mapped[str] = mapped_column(Text, nullable=False)
     # nullable=True — embeddings are added on Day 5, not Day 1
-    embedding: Mapped[list | None] = mapped_column(Vector(3072),
-                                                    nullable=True)
+    # embedding: Mapped[list | None] = mapped_column(Vector(3072),nullable=True)
+    embedding: Mapped[list[float]] = mapped_column(Vector(3072), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
